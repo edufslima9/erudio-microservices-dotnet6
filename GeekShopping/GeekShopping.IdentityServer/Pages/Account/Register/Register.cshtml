@@ -1,0 +1,60 @@
+﻿@page
+@model GeekShopping.IdentityServer.Pages.Account.Register.Register
+
+<div class="login-page">
+    <div class="lead">
+        <h1>Register</h1>
+        <p>Choose how to register</p>
+    </div>
+
+    <partial name="_ValidationSummary" />
+
+    <div class="row">
+
+        <div class="col-sm-6">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Local Account Register</h2>
+                </div>
+
+                <div class="card-body">
+                    <form asp-route="/Account/Register/Register">
+                        <input type="hidden" asp-for="RegisterVM.ReturnUrl" value="@ViewData["ReturnUrl"]" />
+
+                        <div class="form-group">
+                            <label asp-for="RegisterVM.Username"></label>
+                            <input class="form-control" placeholder="Username" asp-for="RegisterVM.Username" autofocus>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="RegisterVM.Email"></label>
+                            <input class="form-control" placeholder="email" asp-for="RegisterVM.Email" autofocus>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="RegisterVM.FirstName"></label>
+                            <input class="form-control" placeholder="first name" asp-for="RegisterVM.FirstName" autofocus>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="RegisterVM.LastName"></label>
+                            <input class="form-control" placeholder="lastname" asp-for="RegisterVM.LastName" autofocus>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="RegisterVM.Password"></label>
+                            <input type="password" class="form-control" placeholder="Password" asp-for="RegisterVM.Password" autocomplete="off">
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="RegisterVM.RoleName"></label>
+                            <select asp-for="RegisterVM.RoleName" class="form-control" asp-items="@(new SelectList((IEnumerable<string>) ViewData["message"]))"></select>
+                        </div>
+                        <button class="btn btn-primary" name="RegisterVM.Button" value="Register">Register</button>
+                        <button class="btn btn-secondary" name="RegisterVM.Button" value="cancel">Cancel</button>
+                    </form>
+                </div>
+                <div class="card-footer">
+                    <a asp-page="/Account/Login/Index" asp-route-returnurl="@ViewData["ReturnUrl"]">Login</a>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+</div>
