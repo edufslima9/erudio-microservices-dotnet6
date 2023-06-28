@@ -10,7 +10,7 @@ namespace GeekShopping.CartAPI.Models
         public long CartHeaderId { get; set; }
 
         [ForeignKey("CartHeaderId")]
-        public virtual CartHeader CartHeader { get; set; }
+        public virtual CartHeader? CartHeader { get; set; }
 
         //[Column("product_id")]
         public long ProductId { get; set; }
