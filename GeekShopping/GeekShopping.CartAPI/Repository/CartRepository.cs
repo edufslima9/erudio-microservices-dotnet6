@@ -88,7 +88,7 @@ namespace GeekShopping.CartAPI.Repository
                 await _context.SaveChangesAsync();
             }
 
-            var cartHeader = await _context.CartHeaders.AsNoTracking().FirstOrDefaultAsync(ch => ch.Id == cart.CartHeader.Id);
+            var cartHeader = await _context.CartHeaders.AsNoTracking().FirstOrDefaultAsync(ch => ch.UserId == cart.CartHeader.UserId);
             if (cartHeader == null)
             {
                 _context.CartHeaders.Add(cart.CartHeader);
