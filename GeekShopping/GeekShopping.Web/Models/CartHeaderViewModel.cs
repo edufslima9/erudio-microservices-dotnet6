@@ -8,7 +8,7 @@
         public string? CouponCode { get; set; }
         public decimal PurchaseAmount { get; set; }
 
-        public decimal DiscountTotal { get; set; }
+        public decimal DiscountAmount { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public DateTime DateTime { get; set; }
