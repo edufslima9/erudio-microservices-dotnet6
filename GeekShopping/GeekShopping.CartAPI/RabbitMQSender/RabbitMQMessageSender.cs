@@ -22,19 +22,14 @@ namespace GeekShopping.CartAPI.RabbitMQSender
 
         public void SendMessage(BaseMessage message, string queueName)
         {
-            var connectionFactory = new ConnectionFactory
+            if (ConnectionExists())
             {
-                HostName = _hostName,
-                UserName = _userName,
-                Password = _password
-            };
-            _connection = connectionFactory.CreateConnection();
+                using var channel = _connection.CreateModel();
+                channel.QueueDeclare(queue: queueName, false, false, false, arguments: null);
 
-            using var channel = _connection.CreateModel();
-            channel.QueueDeclare(queue: queueName, false, false, false, arguments: null);
-
-            byte[] messageBody = GetMessageAsByteArray(message);
-            channel.BasicPublish(exchange: "", routingKey: queueName, basicProperties: null, body: messageBody);
+                byte[] messageBody = GetMessageAsByteArray(message);
+                channel.BasicPublish(exchange: "", routingKey: queueName, basicProperties: null, body: messageBody);
+            }
         }
 
         private byte[] GetMessageAsByteArray(BaseMessage message)
@@ -46,6 +41,31 @@ namespace GeekShopping.CartAPI.RabbitMQSender
             var json = JsonSerializer.Serialize<CheckoutHeaderVO>((CheckoutHeaderVO)message, options);
 
             return Encoding.UTF8.GetBytes(json);
+        }
+
+        private void CreateConnection()
+        {
+            try
+            {
+                var connectionFactory = new ConnectionFactory
+                {
+                    HostName = _hostName,
+                    UserName = _userName,
+                    Password = _password
+                };
+                _connection = connectionFactory.CreateConnection();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        private bool ConnectionExists()
+        {
+            if (_connection != null) return true;
+            CreateConnection();
+            return _connection != null;
         }
     }
 }
