@@ -1,4 +1,6 @@
 using GeekShopping.Email.Models.Context;
+using GeekShopping.Email.Repository;
+using GeekShopping.Email.Repository.Interface;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,6 +9,12 @@ var builder = WebApplication.CreateBuilder(args);
 var connection = builder.Configuration["PostgreSQLConnection:PostgreSQLConnectionString"];
 
 builder.Services.AddDbContext<PostgreSQLContext>(options => options.UseNpgsql(connection));
+
+var databaseBuilder = new DbContextOptionsBuilder<PostgreSQLContext>();
+databaseBuilder.UseNpgsql(connection);
+
+builder.Services.AddSingleton(new EmailRepository(databaseBuilder.Options));
+builder.Services.AddScoped<IEmailRepository, EmailRepository>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
