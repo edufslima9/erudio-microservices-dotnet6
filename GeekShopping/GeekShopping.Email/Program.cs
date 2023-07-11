@@ -1,4 +1,5 @@
 using GeekShopping.Email.Models.Context;
+using GeekShopping.Email.RabbitMQConsumer;
 using GeekShopping.Email.Repository;
 using GeekShopping.Email.Repository.Interface;
 using Microsoft.EntityFrameworkCore;
@@ -15,6 +16,8 @@ databaseBuilder.UseNpgsql(connection);
 
 builder.Services.AddSingleton(new EmailRepository(databaseBuilder.Options));
 builder.Services.AddScoped<IEmailRepository, EmailRepository>();
+
+builder.Services.AddHostedService<RabbitMQPaymentConsumer>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
