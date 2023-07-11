@@ -1,6 +1,12 @@
+using GeekShopping.Email.Models.Context;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+var connection = builder.Configuration["PostgreSQLConnection:PostgreSQLConnectionString"];
+
+builder.Services.AddDbContext<PostgreSQLContext>(options => options.UseNpgsql(connection));
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
