@@ -91,6 +91,7 @@ namespace GeekShopping.CartAPI.Controllers
             vo.DateTime = DateTime.Now;
 
             _rabbitMQMessageSender.SendMessage(vo, "checkoutqueue");
+            await _repository.ClearCart(vo.UserId);
 
             return Ok(vo);
         }

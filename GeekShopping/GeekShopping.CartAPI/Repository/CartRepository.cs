@@ -51,7 +51,7 @@ namespace GeekShopping.CartAPI.Repository
         {
             var cart = new Cart
             {
-                CartHeader = await _context.CartHeaders.FirstOrDefaultAsync(ch => ch.UserId == userId)
+                CartHeader = await _context.CartHeaders.FirstOrDefaultAsync(ch => ch.UserId == userId) ?? new CartHeader()
             };
             cart.CartDetails = await _context.CartDetails.Where(cd => cd.CartHeaderId == cart.CartHeader.Id).Include(cd => cd.Product).ToListAsync();
             return _mapper.Map<CartVO>(cart);
