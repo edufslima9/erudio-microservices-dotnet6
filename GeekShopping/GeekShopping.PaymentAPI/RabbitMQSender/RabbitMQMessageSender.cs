@@ -12,7 +12,9 @@ namespace GeekShopping.PaymentAPI.RabbitMQSender
         private readonly string _password;
         private readonly string _userName;
         private IConnection _connection;
-        public const string ExchangeName = "FanoutPaymentUpdateExchange";
+        public const string ExchangeName = "DirectPaymentUpdateExchange";
+        public const string PaymentEmailUpdateQueueName = "PaymentEmailUpdateQueueName";
+        public const string PaymentOrderUpdateQueueName = "PaymentOrderUpdateQueueName";
 
         public RabbitMQMessageSender()
         {
@@ -26,10 +28,17 @@ namespace GeekShopping.PaymentAPI.RabbitMQSender
             if (ConnectionExists())
             {
                 using var channel = _connection.CreateModel();
-                channel.ExchangeDeclare(ExchangeName, ExchangeType.Fanout, durable: false);
+                channel.ExchangeDeclare(ExchangeName, ExchangeType.Direct, durable: false);
+
+                channel.QueueDeclare(PaymentEmailUpdateQueueName, false, false, false, null);
+                channel.QueueDeclare(PaymentOrderUpdateQueueName, false, false, false, null);
+
+                channel.QueueBind(PaymentEmailUpdateQueueName, ExchangeName, "PaymentEmail");
+                channel.QueueBind(PaymentOrderUpdateQueueName, ExchangeName, "PaymentOrder");
 
                 byte[] messageBody = GetMessageAsByteArray(message);
-                channel.BasicPublish(exchange: ExchangeName, "", basicProperties: null, body: messageBody);
+                channel.BasicPublish(exchange: ExchangeName, "PaymentEmail", basicProperties: null, body: messageBody);
+                channel.BasicPublish(exchange: ExchangeName, "PaymentOrder", basicProperties: null, body: messageBody);
             }
         }
 

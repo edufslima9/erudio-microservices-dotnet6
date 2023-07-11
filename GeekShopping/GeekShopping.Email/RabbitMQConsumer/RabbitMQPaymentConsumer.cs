@@ -12,8 +12,8 @@ namespace GeekShopping.Email.RabbitMQConsumer
         private readonly EmailRepository _repository;
         private IConnection _connection;
         private IModel _channel;
-        public const string ExchangeName = "FanoutPaymentUpdateExchange";
-        string queueName = "";
+        public const string ExchangeName = "DirectPaymentUpdateExchange";
+        string queueName = "PaymentEmailUpdateQueueName";
 
         public RabbitMQPaymentConsumer(EmailRepository repository)
         {
@@ -26,9 +26,9 @@ namespace GeekShopping.Email.RabbitMQConsumer
             };
             _connection = factory.CreateConnection();
             _channel = _connection.CreateModel();
-            _channel.ExchangeDeclare(ExchangeName, ExchangeType.Fanout);
-            queueName = _channel.QueueDeclare().QueueName; // Cria uma fila dinamicamente
-            _channel.QueueBind(queueName, ExchangeName, "");
+            _channel.ExchangeDeclare(ExchangeName, ExchangeType.Direct);
+            _channel.QueueDeclare(queueName, false, false, false, null);
+            _channel.QueueBind(queueName, ExchangeName, "PaymentEmail");
         }
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
