@@ -6,6 +6,7 @@ using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text;
 using System.Text.Json;
+using System.Threading.Channels;
 
 namespace GeekShopping.OrderAPI.RabbitMQConsumer
 {
@@ -14,6 +15,9 @@ namespace GeekShopping.OrderAPI.RabbitMQConsumer
         private readonly OrderRepository _repository;
         private IConnection _connection;
         private IModel _channel;
+        public const string ExchangeName = "FanoutPaymentUpdateExchange";
+        string queueName = "";
+
         public RabbitMQPaymentConsumer(OrderRepository repository)
         {
             _repository = repository;
@@ -25,7 +29,9 @@ namespace GeekShopping.OrderAPI.RabbitMQConsumer
             };
             _connection = factory.CreateConnection();
             _channel = _connection.CreateModel();
-            _channel.QueueDeclare(queue: "orderpaymentresultqueue", false, false, false, arguments: null);
+            _channel.ExchangeDeclare(ExchangeName, ExchangeType.Fanout);
+            queueName = _channel.QueueDeclare().QueueName; // Cria uma fila dinamicamente
+            _channel.QueueBind(queueName, ExchangeName, "");
         }
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
@@ -39,7 +45,7 @@ namespace GeekShopping.OrderAPI.RabbitMQConsumer
                 UpdatePaymentStatus(vo).GetAwaiter().GetResult();
                 _channel.BasicAck(evt.DeliveryTag, false);
             };
-            _channel.BasicConsume("orderpaymentresultqueue", false, consumer);
+            _channel.BasicConsume(queueName, false, consumer);
             return Task.CompletedTask;
         }
 
