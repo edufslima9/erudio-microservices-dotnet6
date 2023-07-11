@@ -7,12 +7,12 @@ using System.Text.Json;
 
 namespace GeekShopping.PaymentAPI.RabbitMQConsumer
 {
-    public class RabbitMQCheckoutConsumer : BackgroundService
+    public class RabbitMQPaymentConsumer : BackgroundService
     {
         private IConnection _connection;
         private IModel _channel;
         private readonly IProccessPayment _proccessPayment;
-        public RabbitMQCheckoutConsumer(IProccessPayment proccessPayment)
+        public RabbitMQPaymentConsumer(IProccessPayment proccessPayment)
         {
             _proccessPayment = proccessPayment;
             var factory = new ConnectionFactory
